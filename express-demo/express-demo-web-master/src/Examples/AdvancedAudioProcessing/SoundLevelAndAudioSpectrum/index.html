@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-lang="SoundLevelAndAudioSpectrum">音量变化</title>
+  <link rel="icon" href="../../../../favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../../assets/css/style.css">
+  <link rel="stylesheet" href="./index.css">
+  <script src="../../../assets/js/express_sdk/ZegoExpressWebRTC.js"></script>
+</head>
+
+<body class="fix-sidebar card-no-border">
+  <div class="preloader">
+    <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+    </svg>
+  </div>
+
+  <div class="container main-wrapper">
+    <!-- <div class="row"> -->
+
+    <div class="page-wrapper">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12 col-lg-6 preview-wrapper">
+            <div class="preview-roomInfo">
+              RoomID:&nbsp;<div id="roomInfo-id" class="m-r-10"></div>
+              RoomState:&nbsp;<div id="roomInfo-state">
+                <div class="success-svg" id="roomStateSuccessSvg" style="display: none;">
+                  <svg class="ft-green-tick" xmlns="http://www.w3.org/2000/svg" height="10" width="10"
+                    viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="circle" fill="#5bb543" cx="24" cy="24" r="22" />
+                  </svg>
+                </div>
+                <div class="error-svg" id="roomStateErrorSvg" style="display: inline-block;">
+                  <svg class="ft-green-tick" xmlns="http://www.w3.org/2000/svg" height="10" width="10"
+                    viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="circle" fill="#5bb543" cx="24" cy="24" r="22" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="m-t-15">
+              <span class="font-14" data-lang="SoundLevelChange">声浪变化</span>
+              <div id="SoundLevelProgressbar" class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                  style="width: 0%;">
+                </div>
+              </div>
+              <div class="flex-b m-t-10">
+                <div class="SoundLevel m-t-10">
+                  <span class="font-12 font-medium m-r-10" data-lang="StartSoundLevelMonitor">Start SoundLevel
+                    Monitor</span>
+                  <input type="checkbox" id="SoundLevelMonitor" /><label for="SoundLevelMonitor"></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- </div> -->
+      <ul class="goToDoc">
+        <li>
+          <span data-lang="HelpDocsVideoCodec"> Web 端视频编码默认使用 VP8。如果需要体验和其他端互通或者转推 CDN 功能，请在调试与配置页面修改为 H.264。</span>
+          &nbsp;
+          <a href="../../DebugAndConfig/LogAndVersionAndDebug/index.html" data-lang="HelpSettingsPage" target="_blank">
+            点击修改 </a>
+        </li>
+        <li>
+          <span data-lang="MoreDocs">更多文档，请跳转至即构 </span> &nbsp;
+          <a href="https://doc-zh.zego.im/article/11937" data-lang="HelpDocs" target="_blank"> 帮助文档 </a>
+        </li>
+      </ul>
+    </div>
+
+    <script src="../../../assets/js/left-menu.js"></script>
+    <script src="../../../assets/js/jquery.min.js"></script>
+    <script src="../../../assets/js/jquery.i18n.properties.min.js"></script>
+    <script src="../../../assets/js/metisMenu.min.js"></script>
+    <script src="../../../assets/js/jquery.slimscroll.min.js"></script>
+    <script src="../../../assets/js/bootstrap.min.js"></script>
+    <script src="../../../assets/js/vconsole.min.js"></script>
+    <script src="../../../assets/js/custom.js"></script>
+    <script src="../../../KeyCenter.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>
