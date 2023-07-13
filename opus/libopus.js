@@ -474,6 +474,7 @@ Module["ALLOC_NONE"] = ALLOC_NONE;
 
 function allocate(slab, types, allocator, ptr) {
     var zeroinit, size;
+
     if (typeof slab === "number") {
         zeroinit = true;
         size = slab
@@ -481,13 +482,17 @@ function allocate(slab, types, allocator, ptr) {
         zeroinit = false;
         size = slab.length
     }
+
     var singleType = typeof types === "string" ? types : null;
+
     var ret;
+
     if (allocator == ALLOC_NONE) {
         ret = ptr
     } else {
         ret = [_malloc, Runtime.stackAlloc, Runtime.staticAlloc, Runtime.dynamicAlloc][allocator === undefined ? ALLOC_STATIC : allocator](Math.max(size, singleType ? 1 : types.length))
     }
+
     if (zeroinit) {
         var ptr = ret, stop;
         assert((ret & 3) == 0);
@@ -501,6 +506,7 @@ function allocate(slab, types, allocator, ptr) {
         }
         return ret
     }
+
     if (singleType === "i8") {
         if (slab.subarray || slab.slice) {
             HEAPU8.set(slab, ret)

@@ -17,33 +17,43 @@ var OpusError;
     OpusError[OpusError["InvalidState"] = -6] = "InvalidState";
     OpusError[OpusError["AllocFail"] = -7] = "AllocFail";
 })(OpusError || (OpusError = {}));
+
 var Opus = (function () {
+
     function Opus() {
     }
+
     Opus.getVersion = function () {
         var ptr = _opus_get_version_string();
         return Pointer_stringify(ptr);
     };
+
     Opus.getMaxFrameSize = function (numberOfStreams) {
         if (numberOfStreams === void 0) { numberOfStreams = 1; }
         return (1275 * 3 + 7) * numberOfStreams;
     };
+
     Opus.getMinFrameDuration = function () {
         return 2.5;
     };
+
     Opus.getMaxFrameDuration = function () {
         return 60;
     };
+
     Opus.validFrameDuration = function (x) {
         return [2.5, 5, 10, 20, 40, 60].some(function (element) {
             return element == x;
         });
     };
+
     Opus.getMaxSamplesPerChannel = function (sampling_rate) {
         return sampling_rate / 1000 * Opus.getMaxFrameDuration();
     };
+
     return Opus;
 })();
+
 var OpusEncoder = (function () {
     function OpusEncoder(sampling_rate, channels, app, frame_duration) {
         if (frame_duration === void 0) { frame_duration = 20; }
@@ -52,26 +62,45 @@ var OpusEncoder = (function () {
         this.in_ptr = 0;
         this.in_off = 0;
         this.out_ptr = 0;
-        if (!Opus.validFrameDuration(frame_duration))
+
+        if (!Opus.validFrameDuration(frame_duration)){
             throw 'invalid frame duration';
+        }
+
         this.frame_size = sampling_rate * frame_duration / 1000;
+        //
         var err_ptr = allocate(4, 'i32', ALLOC_STACK);
+
         this.handle = _opus_encoder_create(sampling_rate, channels, app, err_ptr);
+
         if (getValue(err_ptr, 'i32') != 0 /* OK */)
             throw 'opus_encoder_create failed: ' + getValue(err_ptr, 'i32');
+
+        // 确定是 32位的，所以乘以了 4
         this.in_ptr = _malloc(this.frame_size * channels * 4);
+        // length
         this.in_len = this.frame_size * channels;
+
+        // 16位
         this.in_i16 = HEAP16.subarray(this.in_ptr >> 1, (this.in_ptr >> 1) + this.in_len);
+        // 32位
         this.in_f32 = HEAPF32.subarray(this.in_ptr >> 2, (this.in_ptr >> 2) + this.in_len);
+        // out bytes
         this.out_bytes = Opus.getMaxFrameSize();
+        // put ptr
         this.out_ptr = _malloc(this.out_bytes);
+        // out buf
         this.out_buf = HEAPU8.subarray(this.out_ptr, this.out_ptr + this.out_bytes);
     }
+
     OpusEncoder.prototype.encode = function (pcm) {
         var output = [];
         var pcm_off = 0;
+        // 循环 pcm
         while (pcm.length - pcm_off >= this.in_len - this.in_off) {
+            // copy pcm to in_i16
             if (this.in_off > 0) {
+                // set 把数据存储到 16位上面去。
                 this.in_i16.set(pcm.subarray(pcm_off, pcm_off + this.in_len - this.in_off), this.in_off);
                 pcm_off += this.in_len - this.in_off;
                 this.in_off = 0;
@@ -80,13 +109,21 @@ var OpusEncoder = (function () {
                 this.in_i16.set(pcm.subarray(pcm_off, pcm_off + this.in_len));
                 pcm_off += this.in_len;
             }
+
+            // 调用 encode 方法。
             var ret = _opus_encode(this.handle, this.in_ptr, this.frame_size, this.out_ptr, this.out_bytes);
-            if (ret <= 0)
+
+            if (ret <= 0){
                 throw 'opus_encode failed: ' + ret;
+            }
+
             var packet = new ArrayBuffer(ret);
+
             new Uint8Array(packet).set(this.out_buf.subarray(0, ret));
+
             output.push(packet);
         }
+
         if (pcm_off < pcm.length) {
             this.in_i16.set(pcm.subarray(pcm_off));
             this.in_off = pcm.length - pcm_off;
@@ -152,6 +189,7 @@ var OpusEncoder = (function () {
     };
     return OpusEncoder;
 })();
+
 var OpusDecoder = (function () {
     function OpusDecoder(sampling_rate, channels) {
         this.handle = 0;
